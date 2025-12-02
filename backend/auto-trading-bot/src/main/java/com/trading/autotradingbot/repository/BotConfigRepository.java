@@ -29,11 +29,28 @@ public class BotConfigRepository {
         return jdbcTemplate.queryForObject(sql, configMapper);
     }
 
-    public void switchMode(String symbol, TradingMode mode) {
-        String sql = "UPDATE bot_config SET selected_symbol = ?, trading_mode = ? WHERE id = 1";
-        jdbcTemplate.update(sql, symbol, mode.name());
+    /**
+     * Updates only the selected trading symbol.
+     * Used by BotManagementServiceImpl.changeSymbol().
+     */
+    public void updateSymbol(String symbol) {
+        String sql = "UPDATE bot_config SET selected_symbol = ? WHERE id = 1";
+        jdbcTemplate.update(sql, symbol);
     }
 
+    /**
+     * Updates only the trading mode (TRAINING or TRADING).
+     * Used by BotManagementServiceImpl.switchMode().
+     */
+    public void updateMode(TradingMode mode) {
+        String sql = "UPDATE bot_config SET trading_mode = ? WHERE id = 1";
+        jdbcTemplate.update(sql, mode.name());
+    }
+
+    /**
+     * Updates only the bot status (RUNNING, PAUSED, IDLE).
+     * Used by BotManagementServiceImpl.setStatus().
+     */
     public void updateStatus(BotStatus status) {
         String sql = "UPDATE bot_config SET status = ? WHERE id = 1";
         jdbcTemplate.update(sql, status.name());
