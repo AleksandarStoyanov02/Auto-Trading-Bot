@@ -79,3 +79,7 @@ VALUES (1, 10000.00, 10000.00, 10000.00, NOW(), NOW(), 'LIVE');
 -- 2. BACKTEST Account (Reusable Scratchpad)
 INSERT INTO account (id, start_balance, current_balance, current_portfolio_value, creation_timestamp, last_update_timestamp, account_type)
 VALUES (2, 10000.00, 10000.00, 10000.00, NOW(), NOW(), 'BACKTEST');
+
+-- Default Bot Config
+INSERT INTO bot_config (trading_mode, status, selected_symbol, is_initialized)
+VALUES ('TRADING', 'IDLE', 'BTCUSDT', FALSE);
