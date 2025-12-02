@@ -4,6 +4,7 @@ import com.trading.autotradingbot.entity.BarData;
 import com.trading.autotradingbot.entity.enums.KlineInterval;
 import com.trading.autotradingbot.exception.BinanceApiException;
 import com.trading.autotradingbot.service.MarketDataProvider;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -25,13 +26,14 @@ import org.slf4j.LoggerFactory;
 public class BinanceMarketDataProvider implements MarketDataProvider {
     private static final Logger log = LoggerFactory.getLogger(BinanceMarketDataProvider.class);
 
-    @Value("${binance.api.url}")
-    private String baseUrl;
+    // Have some issues with Value annotation in this class, will be fixed later
+    // @Value("${binance.api.url}")
+    private final String baseUrl = "https://api.binance.com/api/v3";
 
     private final RestTemplate restTemplate;
 
-    public BinanceMarketDataProvider() {
-        this.restTemplate = new RestTemplate();
+    public BinanceMarketDataProvider(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -50,7 +52,7 @@ public class BinanceMarketDataProvider implements MarketDataProvider {
                 throw new IllegalStateException("Failed to parse valid price from API response.");
             }
 
-            return response.get("price").decimalValue();
+            return new BigDecimal(response.get("price").textValue());
 
         } catch (HttpClientErrorException e) {
             log.error("Binance API HTTP error while fetching price for {}: {}", symbol, e.getStatusCode());
