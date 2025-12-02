@@ -29,7 +29,8 @@ public class RSIStrategyService implements TradingStrategyService {
     private String symbol;
     private String intervalCode;
 
-    private BarSeries series;
+    // Package private for testing
+    BarSeries series;
     private final String STRATEGY_NAME = "RSI_Simple_30_70";
 
     @Override
