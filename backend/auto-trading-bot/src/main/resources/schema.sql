@@ -22,6 +22,8 @@ CREATE TABLE portfolio_holding (
                                    CONSTRAINT positive_quantity CHECK (quantity >= 0)
 );
 
+ALTER TABLE portfolio_holding ADD COLUMN avg_buy_price NUMERIC(20, 8) NOT NULL DEFAULT 0;
+
 -- 3. TRADE HISTORY TABLE
 CREATE TABLE trade_history (
                                id BIGSERIAL PRIMARY KEY,

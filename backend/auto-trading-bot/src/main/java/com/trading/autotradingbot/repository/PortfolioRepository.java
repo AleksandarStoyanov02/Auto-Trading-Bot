@@ -40,14 +40,15 @@ public class PortfolioRepository {
     }
 
     // Upsert (Insert or Update) logic
-    public void save(Long accountId, String symbol, BigDecimal quantity) {
+    public void save(Long accountId, String symbol, BigDecimal quantity, BigDecimal avgBuyPrice) {
         String sql = """
-                INSERT INTO portfolio_holding (account_id, symbol, quantity)
-                VALUES (?, ?, ?)
-                ON CONFLICT (account_id, symbol) 
-                DO UPDATE SET quantity = EXCLUDED.quantity
+                INSERT INTO portfolio_holding (account_id, symbol, quantity, avg_buy_price)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT (account_id, symbol)
+                DO UPDATE SET quantity = EXCLUDED.quantity,
+                              avg_buy_price = EXCLUDED.avg_buy_price
                 """;
-        jdbcTemplate.update(sql, accountId, symbol, quantity);
+        jdbcTemplate.update(sql, accountId, symbol, quantity, avgBuyPrice);
     }
 
     public void delete(Long accountId, String symbol) {

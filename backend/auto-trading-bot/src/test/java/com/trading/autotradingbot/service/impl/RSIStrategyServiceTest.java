@@ -90,28 +90,20 @@ class RSIStrategyServiceTest {
 
     @Test
     void testBarUpdateInMiddleOfPeriod() {
-        // ARRANGE:
-        // The last bar in the initial series ends at Hour 15 (0h + 15 hours).
-        // The time period is 1 hour.
+        // ARRANGE
 
         // Use a timestamp *inside* the last bar's period (e.g., 30 minutes before it ends).
         ZonedDateTime updateTime = testTime.plusHours(14).plusMinutes(30);
         BigDecimal minimalPriceChange = new BigDecimal("100.001");
 
-        // Ensure the series starts with 15 bars
         int initialBarCount = 15;
 
-        // ACT: Run the signal calculation
+        // ACT
         Signal signal = strategyService.getSignal(minimalPriceChange, updateTime);
 
-        // ASSERT:
-        // 1. The bar count MUST REMAIN 15, confirming the price update occurred
-        //    on the existing last bar, and no new bar was created.
-        //    (This tests the 'else: series.addPrice()' path).
+        // ASSERT
         assertEquals(initialBarCount, strategyService.series.getBarCount(),
                 "Bar count should remain the same when updating a forming bar.");
-
-        // 2. The signal should be HOLD since the price change is minimal.
         assertEquals(Signal.HOLD, signal, "Should return HOLD for minimal price change mid-bar.");
     }
 }

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class PortfolioHolding {
     private Long accountId;
-    private String symbol; // e.g., "BTCUSDT"
+    private String symbol;
     private BigDecimal quantity;
+    private BigDecimal avgBuyPrice;
 }
