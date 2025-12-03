@@ -67,4 +67,14 @@ public class BarDataRepository {
             ps.setString(8, bar.getInterval());
         });
     }
+
+
+    /**
+     * Clears the historical data cache for a given symbol and interval.
+     * Used to isolate backtest data between test runs.
+     */
+    public void deleteAllBySymbolAndInterval(String symbol, String interval) {
+        String sql = "DELETE FROM bar_data_cache WHERE symbol = ? AND \"interval\" = ?";
+        jdbcTemplate.update(sql, symbol, interval);
+    }
 }

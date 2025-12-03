@@ -23,6 +23,7 @@ public class PortfolioRepository {
             .accountId(rs.getLong("account_id"))
             .symbol(rs.getString("symbol"))
             .quantity(rs.getBigDecimal("quantity"))
+            .avgBuyPrice(rs.getBigDecimal("avg_buy_price"))
             .build();
 
     public Optional<PortfolioHolding> findByIdAndSymbol(Long accountId, String symbol) {

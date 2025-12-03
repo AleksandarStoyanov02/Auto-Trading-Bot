@@ -55,14 +55,14 @@ public class AllInOrderExecutionService implements OrderExecutionHandler {
         }
 
         BigDecimal quantity = amountToSpend.divide(price, SCALE, RoundingMode.DOWN);
-        BigDecimal fee = amountToSpend.multiply(FEE_RATE).setScale(SCALE, RoundingMode.HALF_UP);
+        BigDecimal fee = cashAvailable.multiply(FEE_RATE).setScale(SCALE, RoundingMode.HALF_UP);
         BigDecimal totalSpent = amountToSpend.add(fee);
 
         BigDecimal newCashBalance = cashAvailable.subtract(totalSpent);
-        BigDecimal newPortfolioValue = account.getCurrentPortfolioValue().add(amountToSpend);
+        BigDecimal newPortfolioValue = account.getCurrentPortfolioValue().subtract(fee);
+        accountRepository.updateBalance(accountId, newCashBalance, newPortfolioValue);
 
         Optional<PortfolioHolding> existingHoldingOpt = portfolioRepository.findByIdAndSymbol(accountId, symbol);
-
         BigDecimal finalQuantity;
         BigDecimal finalAvgPrice;
 
@@ -84,7 +84,6 @@ public class AllInOrderExecutionService implements OrderExecutionHandler {
             finalAvgPrice = price.setScale(SCALE, RoundingMode.HALF_UP);
         }
 
-        accountRepository.updateBalance(accountId, newCashBalance, newPortfolioValue);
         portfolioRepository.save(accountId, symbol, finalQuantity, finalAvgPrice);
 
         Trade trade = Trade.builder()

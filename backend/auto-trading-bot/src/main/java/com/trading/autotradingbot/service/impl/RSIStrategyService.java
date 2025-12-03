@@ -31,7 +31,6 @@ public class RSIStrategyService implements TradingStrategyService {
 
     // Package private for testing
     BarSeries series;
-    private final String STRATEGY_NAME = "RSI_Simple_30_70";
 
     @Override
     public void initializeSeries(List<BarData> historicalBars) {
@@ -77,6 +76,7 @@ public class RSIStrategyService implements TradingStrategyService {
         series.addBar(newBar);
     }
 
+    @Override
     public Signal getSignal(BigDecimal newPrice, ZonedDateTime timestamp) {
         if (series == null || series.getBarCount() < MIN_BARS_FOR_ANALYSIS) {
             throw new IllegalStateException("Trading analysis cannot run: BarSeries is empty or needs more data (min "
@@ -108,8 +108,14 @@ public class RSIStrategyService implements TradingStrategyService {
         }
     }
 
+    @Override
     public String getStrategyName() {
-        return STRATEGY_NAME;
+        return "RSI_Simple_30_70";
+    }
+
+    @Override
+    public int getMinBarsForAnalysis() {
+        return MIN_BARS_FOR_ANALYSIS;
     }
 
     private void addBarData(BarData barData) {

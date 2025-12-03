@@ -2,6 +2,7 @@ package com.trading.autotradingbot.repository;
 
 import com.trading.autotradingbot.entity.Account;
 import com.trading.autotradingbot.entity.enums.AccountType;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -35,6 +36,17 @@ public class AccountRepository {
         return jdbcTemplate.query(sql, accountRowMapper, id).stream().findFirst();
     }
 
+    public void updatePortfolioValue(Long id, BigDecimal newPortfolioValue, LocalDateTime timestamp) {
+        String sql = """
+                UPDATE account
+                SET current_portfolio_value = ?,
+                    last_update_timestamp = ?
+                WHERE id = ?
+                """;
+        jdbcTemplate.update(sql, newPortfolioValue, timestamp, id);
+    }
+
+
     public void updateBalance(Long id, BigDecimal newBalance, BigDecimal newPortfolioValue) {
         String sql = """
                 UPDATE account
@@ -56,5 +68,11 @@ public class AccountRepository {
                 WHERE id = ?
                 """;
         jdbcTemplate.update(sql, startAmount, startAmount, startAmount, LocalDateTime.now(), id);
+    }
+
+    public BigDecimal getAccountBalance(Long id) {
+        String sql = "SELECT current_balance FROM account WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
     }
 }

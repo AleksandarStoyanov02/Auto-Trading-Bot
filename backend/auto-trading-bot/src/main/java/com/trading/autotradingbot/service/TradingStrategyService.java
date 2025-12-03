@@ -19,4 +19,6 @@ public interface TradingStrategyService {
 
     /** Returns the unique identifier for this strategy (e.g., "RSI_Simple_30_70"). */
     String getStrategyName();
+
+    int getMinBarsForAnalysis();
 }
