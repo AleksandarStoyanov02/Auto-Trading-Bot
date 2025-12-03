@@ -55,7 +55,7 @@ public class AllInOrderExecutionService implements OrderExecutionHandler {
         }
 
         BigDecimal quantity = amountToSpend.divide(price, SCALE, RoundingMode.DOWN);
-        BigDecimal fee = cashAvailable.multiply(FEE_RATE).setScale(SCALE, RoundingMode.HALF_UP);
+        BigDecimal fee = amountToSpend.multiply(FEE_RATE).setScale(SCALE, RoundingMode.HALF_UP);
         BigDecimal totalSpent = amountToSpend.add(fee);
 
         BigDecimal newCashBalance = cashAvailable.subtract(totalSpent);

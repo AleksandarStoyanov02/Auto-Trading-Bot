@@ -27,7 +27,7 @@ public class TrainingServiceImpl implements TrainingService {
     private final OrderExecutionHandler orderExecutionHandler;
     private final SnapshotService snapshotService;
 
-    private static final int INITIAL_BAR_LIMIT = 1000;
+    static final int INITIAL_BAR_LIMIT = 1000;
     private static final BigDecimal STARTING_CAPITAL = new BigDecimal("10000.00");
 
 
