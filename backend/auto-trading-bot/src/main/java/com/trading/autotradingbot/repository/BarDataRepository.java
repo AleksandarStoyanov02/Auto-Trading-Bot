@@ -77,4 +77,9 @@ public class BarDataRepository {
         String sql = "DELETE FROM bar_data_cache WHERE symbol = ? AND \"interval\" = ?";
         jdbcTemplate.update(sql, symbol, interval);
     }
+
+    public void deleteAll() {
+        String sql = "DELETE FROM bar_data_cache";
+        jdbcTemplate.update(sql);
+    }
 }

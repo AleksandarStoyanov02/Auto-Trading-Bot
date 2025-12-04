@@ -14,11 +14,6 @@ public class CacheInitializer {
 
     private final BarDataRepository barDataRepository;
 
-    // Assuming the default trading symbol and interval are BTCUSDT and 1h
-    private static final String DEFAULT_SYMBOL = "BTCUSDT";
-    private static final String DEFAULT_INTERVAL = "1h";
-
-
     public CacheInitializer(BarDataRepository barDataRepository) {
         this.barDataRepository = barDataRepository;
     }
@@ -32,8 +27,8 @@ public class CacheInitializer {
         log.warn("Clearing all historical data from bar_data_cache...");
 
         try {
-            barDataRepository.deleteAllBySymbolAndInterval(DEFAULT_SYMBOL, DEFAULT_INTERVAL);
-            log.warn("Cache cleared successfully for {}:{}.", DEFAULT_SYMBOL, DEFAULT_INTERVAL);
+            barDataRepository.deleteAll();
+            log.warn("Cache cleared successfully.");
         } catch (Exception e) {
             log.error("Failed to clear cache table. Database connection likely failed.", e);
         }
