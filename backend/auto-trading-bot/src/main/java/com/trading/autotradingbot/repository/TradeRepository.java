@@ -2,10 +2,12 @@ package com.trading.autotradingbot.repository;
 
 import com.trading.autotradingbot.entity.Trade;
 import com.trading.autotradingbot.entity.enums.TradeAction;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -60,5 +62,10 @@ public class TradeRepository {
     public void deleteAllByAccountId(Long accountId) {
         String sql = "DELETE FROM trade_history WHERE account_id = ?";
         jdbcTemplate.update(sql, accountId);
+    }
+
+    public BigDecimal getTotalRealizedProfitLoss(Long accountId) {
+        String sql = "SELECT COALESCE(SUM(profit_loss), 0) FROM trade_history WHERE account_id = ?";
+        return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
     }
 }

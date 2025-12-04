@@ -58,7 +58,7 @@ public class LiveTradingServiceImpl {
      *  CORE TRADING LOOP: Runs frequently (every 5 seconds) to check price and execute trades.
      */
     @Scheduled(fixedRate = 5000)
-    public void runLiveTradingLoop() {
+    private void runLiveTradingLoop() {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalStateException("Invalid Account ID."));
 
@@ -69,7 +69,8 @@ public class LiveTradingServiceImpl {
         BotConfig config = botManagementService.getConfig();
 
         if (config.getStatus() != BotStatus.RUNNING || config.getTradingMode() != TradingMode.TRADING) {
-            throw new SecurityException("Trying to run Live Trading for a Paused or Training bot");
+            log.info("Currently used Bot is either in Training mode or Paused");
+            return;
         }
 
         String symbol = config.getSelectedSymbol();
@@ -134,6 +135,8 @@ public class LiveTradingServiceImpl {
 
         botManagementService.changeSymbol(symbol);
         botManagementService.setStatus(BotStatus.RUNNING);
+
+        runLiveTradingLoop();
 
         log.info("Live Trading started for {} ({} interval).", symbol, interval);
     }

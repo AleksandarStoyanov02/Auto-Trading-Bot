@@ -79,8 +79,6 @@ class LiveTradingServiceIntegrationTest {
         assertEquals(BotStatus.RUNNING, botConfigRepository.getConfig().getStatus(), "Status should be RUNNING after calling startLiveTrading.");
         assertEquals(WARMUP_BARS_COUNT, barDataRepository.findAllBySymbolAndInterval(SYMBOL, INTERVAL).size(), "DB cache should hold 14 bars after initialization.");
 
-        liveTradingService.runLiveTradingLoop();
-
         List<Trade> trades = tradeRepository.findAllByAccountId(LIVE_ACCOUNT_ID);
         assertFalse(trades.isEmpty(), "A BUY trade should have been executed.");
         assertEquals(TradeAction.BUY, trades.getFirst().getAction());

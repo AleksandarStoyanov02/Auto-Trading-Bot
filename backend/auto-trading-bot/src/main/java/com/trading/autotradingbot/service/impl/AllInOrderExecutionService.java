@@ -4,6 +4,7 @@ import com.trading.autotradingbot.entity.Account;
 import com.trading.autotradingbot.entity.PortfolioHolding;
 import com.trading.autotradingbot.entity.Trade;
 import com.trading.autotradingbot.entity.enums.TradeAction;
+import com.trading.autotradingbot.exception.TradeExecutionConstraintException;
 import com.trading.autotradingbot.repository.AccountRepository;
 import com.trading.autotradingbot.repository.PortfolioRepository;
 import com.trading.autotradingbot.repository.TradeRepository;
@@ -109,7 +110,7 @@ public class AllInOrderExecutionService implements OrderExecutionHandler {
     @Transactional
     public void executeSell(Long accountId, String symbol, BigDecimal price, String strategyName) {
         PortfolioHolding holding = portfolioRepository.findByIdAndSymbol(accountId, symbol)
-                .orElseThrow(() -> new IllegalStateException("Cannot SELL: No holdings found for " + symbol));
+                .orElseThrow(() -> new TradeExecutionConstraintException("Cannot SELL: No holdings found for " + symbol));
 
         BigDecimal quantityToSell = holding.getQuantity();
 

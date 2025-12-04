@@ -84,7 +84,7 @@ public class BinanceMarketDataProvider implements MarketDataProvider {
 
     private KlineInterval getKlineInterval(String interval) {
         try {
-            return KlineInterval.valueOf(interval);
+            return KlineInterval.fromCode(interval);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid kline interval: " + interval +
                                                ". Must be one of: " + Arrays.toString(KlineInterval.values()));

@@ -29,4 +29,17 @@ public enum KlineInterval {
     public String getCode() {
         return code;
     }
+
+    public static KlineInterval fromCode(String code) {
+        for (KlineInterval interval : values()) {
+            if (interval.code.equalsIgnoreCase(code)) {
+                return interval;
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Invalid kline interval code: " + code +
+                        ". Must be one of the codes defined in the enum."
+        );
+    }
 }

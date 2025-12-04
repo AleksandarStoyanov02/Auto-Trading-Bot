@@ -2,20 +2,27 @@ package com.trading.autotradingbot.service.impl;
 
 import com.trading.autotradingbot.entity.Account;
 import com.trading.autotradingbot.entity.BarData;
+import com.trading.autotradingbot.entity.PortfolioHolding;
 import com.trading.autotradingbot.entity.enums.AccountType;
 import com.trading.autotradingbot.entity.enums.Signal;
+import com.trading.autotradingbot.exception.TradeExecutionConstraintException;
 import com.trading.autotradingbot.repository.*;
 import com.trading.autotradingbot.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
+    private static final Logger log = LoggerFactory.getLogger(TrainingServiceImpl.class);
     private final AccountRepository accountRepository;
     private final TradeRepository tradeRepository;
     private final PortfolioRepository portfolioRepository;
@@ -29,6 +36,8 @@ public class TrainingServiceImpl implements TrainingService {
 
     static final int INITIAL_BAR_LIMIT = 1000;
     private static final BigDecimal STARTING_CAPITAL = new BigDecimal("10000.00");
+    private static final BigDecimal STOP_LOSS_THRESHOLD = new BigDecimal("0.98"); // 98% of cost basis (2% drop)
+    private static final int SCALE = 8;
 
 
     // Constructor Injection (all dependencies)
@@ -101,17 +110,39 @@ public class TrainingServiceImpl implements TrainingService {
             BigDecimal price = currentBar.getClosePrice();
             ZonedDateTime timestamp = ZonedDateTime.of(currentBar.getOpenTime(), ZoneId.systemDefault());
 
+            Optional<PortfolioHolding> holdingOpt = portfolioRepository.findByIdAndSymbol(accountId, symbol);
+            boolean positionOpen = holdingOpt.isPresent();
+
             Signal signal = tradingStrategy.getSignal(price, timestamp);
 
             if (i >= minBarsForAnalysis) {
-                if (signal == Signal.BUY) {
-                    orderExecutionHandler.executeBuy(accountId, symbol, price, tradingStrategy.getStrategyName());
-                } else if (signal == Signal.SELL) {
-                    orderExecutionHandler.executeSell(accountId, symbol, price, tradingStrategy.getStrategyName());
+
+                if (positionOpen && isStopLossTriggered(holdingOpt.get(), price)) {
+                    orderExecutionHandler.executeSell(accountId, symbol, price, "STOP_LOSS");
+                } else {
+                    try {
+                        if (signal == Signal.BUY && !positionOpen) {
+                            orderExecutionHandler.executeBuy(accountId, symbol, price, tradingStrategy.getStrategyName());
+                        } else if (signal == Signal.SELL && positionOpen) {
+                            orderExecutionHandler.executeSell(accountId, symbol, price, tradingStrategy.getStrategyName());
+                        }
+                    } catch (TradeExecutionConstraintException e) {
+                        log.debug("Trade skipped for account {}: {}", accountId, e.getMessage());
+                    }
                 }
             }
 
             snapshotService.captureSnapshot(accountId, price, currentBar.getOpenTime());
         }
+    }
+
+    /**
+     * Checks if the current price has dropped 2% or more below the average buy price.
+     */
+    private boolean isStopLossTriggered(PortfolioHolding holding, BigDecimal currentPrice) {
+        BigDecimal avgBuyPrice = holding.getAvgBuyPrice();
+        BigDecimal triggerPrice = avgBuyPrice.multiply(STOP_LOSS_THRESHOLD).setScale(SCALE, RoundingMode.HALF_UP);
+
+        return currentPrice.compareTo(triggerPrice) <= 0;
     }
 }
