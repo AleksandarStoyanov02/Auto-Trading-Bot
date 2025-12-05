@@ -1,5 +1,6 @@
 package com.trading.autotradingbot.service.impl;
 
+import com.trading.autotradingbot.common.AccountConstants;
 import com.trading.autotradingbot.entity.Account;
 import com.trading.autotradingbot.entity.BarData;
 import com.trading.autotradingbot.entity.PortfolioHolding;
@@ -20,54 +21,37 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.trading.autotradingbot.common.AccountConstants.SCALE;
+import static com.trading.autotradingbot.common.AccountConstants.STOP_LOSS_THRESHOLD;
+
 @Service
 public class TrainingServiceImpl implements TrainingService {
     private static final Logger log = LoggerFactory.getLogger(TrainingServiceImpl.class);
     private final AccountRepository accountRepository;
-    private final TradeRepository tradeRepository;
     private final PortfolioRepository portfolioRepository;
-    private final SnapshotRepository snapshotRepository;
     private final BarDataRepository barDataRepository;
 
     private final MarketDataProvider marketDataProvider;
     private final TradingStrategyService tradingStrategy;
     private final OrderExecutionHandler orderExecutionHandler;
     private final SnapshotService snapshotService;
+    private final AccountResetService accountResetService;
 
     static final int INITIAL_BAR_LIMIT = 1000;
-    private static final BigDecimal STARTING_CAPITAL = new BigDecimal("10000.00");
-    private static final BigDecimal STOP_LOSS_THRESHOLD = new BigDecimal("0.98"); // 98% of cost basis (2% drop)
-    private static final int SCALE = 8;
 
 
-    // Constructor Injection (all dependencies)
-    public TrainingServiceImpl(AccountRepository accountRepository, TradeRepository tradeRepository,
-                               PortfolioRepository portfolioRepository, SnapshotRepository snapshotRepository,
+    public TrainingServiceImpl(AccountRepository accountRepository, PortfolioRepository portfolioRepository,
                                BarDataRepository barDataRepository, MarketDataProvider marketDataProvider,
                                TradingStrategyService tradingStrategy, OrderExecutionHandler orderExecutionHandler,
-                               SnapshotService snapshotService) {
+                               SnapshotService snapshotService, AccountResetService accountResetService) {
         this.accountRepository = accountRepository;
-        this.tradeRepository = tradeRepository;
         this.portfolioRepository = portfolioRepository;
-        this.snapshotRepository = snapshotRepository;
         this.barDataRepository = barDataRepository;
         this.marketDataProvider = marketDataProvider;
         this.tradingStrategy = tradingStrategy;
         this.orderExecutionHandler = orderExecutionHandler;
         this.snapshotService = snapshotService;
-    }
-
-    /**
-     * Wipes all data associated with the backtest account (ID 2).
-     */
-    @Override
-    @Transactional
-    public void resetData(Long accountId) {
-        tradeRepository.deleteAllByAccountId(accountId);
-        portfolioRepository.deleteAllByAccountId(accountId);
-        snapshotRepository.deleteAllByAccountId(accountId);
-
-        accountRepository.resetAccount(accountId, STARTING_CAPITAL);
+        this.accountResetService = accountResetService;
     }
 
     /**
@@ -93,7 +77,8 @@ public class TrainingServiceImpl implements TrainingService {
         if (account.getAccountType() == AccountType.LIVE) {
             throw new SecurityException("Attempted to run backtest simulation on LIVE trading account. Operation aborted.");
         }
-        resetData(accountId);
+
+        accountResetService.resetAllAccountData(AccountConstants.BACKTEST_ACCOUNT_ID, AccountConstants.DEFAULT_CAPITAL);
 
         if (barDataRepository.isCacheEmpty(symbol, interval)) {
             List<BarData> freshData = marketDataProvider.getHistoricalData(symbol, interval, INITIAL_BAR_LIMIT);
@@ -133,6 +118,14 @@ public class TrainingServiceImpl implements TrainingService {
             }
 
             snapshotService.captureSnapshot(accountId, price, currentBar.getOpenTime());
+        }
+
+        PortfolioHolding finalHolding = portfolioRepository.findByIdAndSymbol(accountId, symbol).orElse(null);
+
+        if (finalHolding != null) {
+            BarData lastBar = historicalBars.getLast();
+
+            orderExecutionHandler.executeSell(accountId, symbol, lastBar.getClosePrice(), "FINAL_LIQUIDATION");
         }
     }
 

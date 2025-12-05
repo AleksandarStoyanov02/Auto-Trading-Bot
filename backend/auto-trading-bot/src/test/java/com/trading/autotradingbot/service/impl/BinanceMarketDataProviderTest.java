@@ -39,7 +39,7 @@ class BinanceMarketDataProviderTest {
     );
 
     private final String TEST_SYMBOL = "BTCUSDT";
-    private final String TEST_INTERVAL = "ONE_HOUR";
+    private final String TEST_INTERVAL = "1h";
 
     @Test
     void shouldReturnCorrectBigDecimalPrice() {

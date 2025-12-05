@@ -2,7 +2,6 @@ package com.trading.autotradingbot.repository;
 
 import com.trading.autotradingbot.entity.Account;
 import com.trading.autotradingbot.entity.enums.AccountType;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

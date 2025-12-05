@@ -85,6 +85,7 @@ public class AllInOrderExecutionService implements OrderExecutionHandler {
             finalAvgPrice = price.setScale(SCALE, RoundingMode.HALF_UP);
         }
 
+        BigDecimal buyPnL = fee.negate();
         portfolioRepository.save(accountId, symbol, finalQuantity, finalAvgPrice);
 
         Trade trade = Trade.builder()
@@ -95,7 +96,7 @@ public class AllInOrderExecutionService implements OrderExecutionHandler {
                 .quantity(quantity)
                 .price(price)
                 .fee(fee)
-                .profitLoss(BigDecimal.ZERO)
+                .profitLoss(buyPnL)
                 .finalBalance(newCashBalance)
                 .strategyName(strategyName)
                 .build();

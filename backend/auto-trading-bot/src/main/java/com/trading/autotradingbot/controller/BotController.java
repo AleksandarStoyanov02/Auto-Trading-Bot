@@ -1,10 +1,12 @@
 package com.trading.autotradingbot.controller;
 
+import com.trading.autotradingbot.common.AccountConstants;
 import com.trading.autotradingbot.entity.BotConfig;
 import com.trading.autotradingbot.dto.BotConfigDto;
 import com.trading.autotradingbot.entity.enums.BotStatus;
 import com.trading.autotradingbot.entity.enums.TradingMode;
 import com.trading.autotradingbot.mapper.BotConfigMapper;
+import com.trading.autotradingbot.service.AccountResetService;
 import com.trading.autotradingbot.service.BotManagementService;
 import com.trading.autotradingbot.service.impl.LiveTradingServiceImpl;
 import com.trading.autotradingbot.service.TrainingService;
@@ -22,13 +24,16 @@ public class BotController {
     private final BotManagementService botManagementService;
     private final TrainingService trainingService;
     private final BotConfigMapper botConfigMapper;
+    private final AccountResetService accountResetService;
     private final LiveTradingServiceImpl liveTradingService;
 
     public BotController(BotManagementService botManagementService, TrainingService trainingService,
-                         BotConfigMapper botConfigMapper, LiveTradingServiceImpl liveTradingService) {
+                         BotConfigMapper botConfigMapper, AccountResetService accountResetService,
+                         LiveTradingServiceImpl liveTradingService) {
         this.botManagementService = botManagementService;
         this.trainingService = trainingService;
         this.botConfigMapper = botConfigMapper;
+        this.accountResetService = accountResetService;
         this.liveTradingService = liveTradingService;
     }
 
@@ -75,8 +80,7 @@ public class BotController {
 
     @PostMapping("/reset")
     public ResponseEntity<Void> resetBotData() {
-        // Reset only Training account data
-        trainingService.resetData(2L);
+        accountResetService.resetAllAccountData(AccountConstants.BACKTEST_ACCOUNT_ID, AccountConstants.DEFAULT_CAPITAL);
         return ResponseEntity.ok().build();
     }
 }

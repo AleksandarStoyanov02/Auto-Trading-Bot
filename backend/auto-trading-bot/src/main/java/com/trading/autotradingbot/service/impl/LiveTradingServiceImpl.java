@@ -3,9 +3,12 @@ package com.trading.autotradingbot.service.impl;
 import com.trading.autotradingbot.entity.Account;
 import com.trading.autotradingbot.entity.BarData;
 import com.trading.autotradingbot.entity.BotConfig;
+import com.trading.autotradingbot.entity.PortfolioHolding;
 import com.trading.autotradingbot.entity.enums.*;
+import com.trading.autotradingbot.exception.TradeExecutionConstraintException;
 import com.trading.autotradingbot.repository.AccountRepository;
 import com.trading.autotradingbot.repository.BarDataRepository;
+import com.trading.autotradingbot.repository.PortfolioRepository;
 import com.trading.autotradingbot.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,20 +17,18 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+import static com.trading.autotradingbot.common.AccountConstants.*;
 import static com.trading.autotradingbot.service.impl.TrainingServiceImpl.INITIAL_BAR_LIMIT;
 
 @Service
 public class LiveTradingServiceImpl {
     private static final Logger log = LoggerFactory.getLogger(LiveTradingServiceImpl.class);
-    // MVP Constant
-    private static final Long accountId = 1L;
-
-    @Value("${bot.snapshot.rate.ms}")
-    private long snapshotRateMs;
 
     private final BotManagementService botManagementService;
     private final MarketDataProvider marketDataProvider;
@@ -36,6 +37,7 @@ public class LiveTradingServiceImpl {
     private final SnapshotService snapshotService;
     private final AccountRepository accountRepository;
     private final BarDataRepository barDataRepository;
+    private final PortfolioRepository portfolioRepository;
 
     public LiveTradingServiceImpl(
             BotManagementService botManagementService,
@@ -44,7 +46,8 @@ public class LiveTradingServiceImpl {
             OrderExecutionHandler orderExecutionHandler,
             SnapshotService snapshotService,
             AccountRepository accountRepository,
-            BarDataRepository barDataRepository) {
+            BarDataRepository barDataRepository,
+            PortfolioRepository portfolioRepository) {
         this.botManagementService = botManagementService;
         this.marketDataProvider = marketDataProvider;
         this.tradingStrategy = tradingStrategy;
@@ -52,6 +55,7 @@ public class LiveTradingServiceImpl {
         this.snapshotService = snapshotService;
         this.accountRepository = accountRepository;
         this.barDataRepository = barDataRepository;
+        this.portfolioRepository = portfolioRepository;
     }
 
     /**
@@ -59,7 +63,7 @@ public class LiveTradingServiceImpl {
      */
     @Scheduled(fixedRate = 5000)
     private void runLiveTradingLoop() {
-        Account account = accountRepository.findById(accountId)
+        Account account = accountRepository.findById(LIVE_ACCOUNT_ID)
                 .orElseThrow(() -> new IllegalStateException("Invalid Account ID."));
 
         if (account.getAccountType() != AccountType.LIVE) {
@@ -78,15 +82,26 @@ public class LiveTradingServiceImpl {
 
         try {
             BigDecimal price = marketDataProvider.getLivePrice(symbol);
+            Optional<PortfolioHolding> holdingOpt = portfolioRepository.findByIdAndSymbol(LIVE_ACCOUNT_ID, symbol); // <<< NEW: Check Position
+            boolean positionOpen = holdingOpt.isPresent();
+
             Signal signal = tradingStrategy.getSignal(price, timestamp);
 
-            if (signal == Signal.BUY) {
-                orderExecutionHandler.executeBuy(accountId, symbol, price, tradingStrategy.getStrategyName());
-            } else if (signal == Signal.SELL) {
-                orderExecutionHandler.executeSell(accountId, symbol, price, tradingStrategy.getStrategyName());
+            if (positionOpen && isStopLossTriggered(holdingOpt.get(), price)) {
+                orderExecutionHandler.executeSell(LIVE_ACCOUNT_ID, symbol, price, "STOP_LOSS");
+            } else {
+                try {
+                    if (signal == Signal.BUY && !positionOpen) {
+                        orderExecutionHandler.executeBuy(LIVE_ACCOUNT_ID, symbol, price, tradingStrategy.getStrategyName());
+                    } else if (signal == Signal.SELL && positionOpen) {
+                        orderExecutionHandler.executeSell(LIVE_ACCOUNT_ID, symbol, price, tradingStrategy.getStrategyName());
+                    }
+                } catch (TradeExecutionConstraintException e) {
+                    log.debug("Trade skipped for account {}: {}", LIVE_ACCOUNT_ID, e.getMessage());
+                }
             }
 
-            snapshotService.captureSnapshot(accountId, price, timestamp.toLocalDateTime());
+            snapshotService.captureSnapshot(LIVE_ACCOUNT_ID, price, timestamp.toLocalDateTime());
 
         } catch (RuntimeException e) {
             log.error("Live Trading Loop encountered runtime exception: {}", e.getMessage(), e);
@@ -139,5 +154,15 @@ public class LiveTradingServiceImpl {
         runLiveTradingLoop();
 
         log.info("Live Trading started for {} ({} interval).", symbol, interval);
+    }
+
+    /**
+     * Helper method to check if the current price has dropped 2% or more below the average buy price.
+     */
+    private boolean isStopLossTriggered(PortfolioHolding holding, BigDecimal currentPrice) {
+        BigDecimal avgBuyPrice = holding.getAvgBuyPrice();
+        BigDecimal triggerPrice = avgBuyPrice.multiply(STOP_LOSS_THRESHOLD).setScale(SCALE, RoundingMode.HALF_UP);
+
+        return currentPrice.compareTo(triggerPrice) <= 0;
     }
 }
