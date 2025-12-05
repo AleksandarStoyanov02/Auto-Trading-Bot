@@ -21,7 +21,7 @@ This project is a full-stack web application designed to simulate an autonomous 
 
 | Component | Technology | Reasoning |
 | :--- | :--- | :--- |
-| **Backend** | Java 21, **Spring Boot 3** | Robust, enterprise-grade architecture. |
+| **Backend** | Java 21, **Spring Boot 4** | Robust, enterprise-grade architecture. |
 | **Data Access** | **Spring JDBC Template** | Required to meet the "No ORM" constraint (raw SQL). |
 | **Trading Logic** | **TA4J** (Technical Analysis for Java) | Used for calculating indicators (e.g., RSI) during strategy execution. |
 | **Database** | PostgreSQL (via Docker) | Reliable relational database storage. |
