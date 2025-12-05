@@ -39,6 +39,7 @@ export const fetchAccountPerformance = async (): Promise<AccountSnapshot[]> => {
 };
 
 export const fetchMarketChartData = async (interval: string): Promise<BarData[]> => {
+    // GET /api/market/chart?interval={1m, 5m, 1h, etc.}
     const response = await fetch(`${BASE_URL}/market/chart?interval=${interval}`);
     return handleResponse(response);
 };

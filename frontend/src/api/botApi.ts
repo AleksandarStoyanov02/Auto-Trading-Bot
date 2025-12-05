@@ -1,4 +1,4 @@
-import type { BotConfigDto } from '../types/dto/BotConfigDto'; // Assume DTO interface exists
+import type { BotConfigDto } from '../types/dto/BotConfigDto';
 
 const BASE_URL = '/api/bot';
 
