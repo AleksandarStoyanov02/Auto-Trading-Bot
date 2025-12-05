@@ -6,9 +6,7 @@ This project is a full-stack web application designed to simulate an autonomous 
 
 **Core Goal:** Develop a web application that simulates an automated crypto trading bot.
 
----
-
-## 🚀 Technical Stack
+## Technical Stack
 
 | Component | Technology | Reasoning |
 | :--- | :--- | :--- |
@@ -19,9 +17,9 @@ This project is a full-stack web application designed to simulate an autonomous 
 | **Frontend** | React, Vite, Basic CSS | Modern, fast development environment. |
 | **Data Source** | **Binance REST API** | Used for fetching historical (klines) and live price data. |
 
----
 
-## 🛠️ Setup & Requirements
+
+## Setup & Requirements
 
 ### 1. Prerequisites
 
@@ -104,7 +102,7 @@ npm run dev
 
 The dashboard will open automatically (usually on port 5173), using the configured proxy to communicate with the backend.
 
-# 🔗 Project Documentation
+# Project Documentation
 For detailed architectural diagrams, design rationale, and future improvements (including the Reflection document), please refer to the dedicated project space:
 
 https://ecommercedev.atlassian.net/wiki/spaces/ATB/overview
