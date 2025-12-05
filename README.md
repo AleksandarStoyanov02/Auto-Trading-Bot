@@ -4,6 +4,7 @@
 ![JDBC](https://img.shields.io/badge/JDBC-Raw%20SQL-BB4F9C?logo=oracle&logoColor=white)
 [![Gradle](https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white)](https://gradle.org/)
 ![TA4J](https://img.shields.io/badge/TA4J-0.19-2196F3?logo=java&logoColor=white)
+![Binance API](https://img.shields.io/badge/Binance%20API-FCD535?logo=binance&logoColor=black&style=flat)
 ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
