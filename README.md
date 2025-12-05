@@ -1,11 +1,13 @@
 [![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)](https://www.java.com/en/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3-6DB33F?logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-6DB33F?logo=spring&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white)
 ![JDBC](https://img.shields.io/badge/JDBC-Raw%20SQL-BB4F9C?logo=oracle&logoColor=white)
 [![Gradle](https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white)](https://gradle.org/)
 ![TA4J](https://img.shields.io/badge/TA4J-0.19-2196F3?logo=java&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
 
 # 🤖 Auto Trading Bot Simulation Service
 
