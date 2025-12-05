@@ -58,3 +58,35 @@ docker-compose up -d
 
 # Verify the container is running
 docker ps
+
+**Manual Schema Execution (Required for Raw SQL):**Since we are not using Flyway, you must execute the schema script manually once after the container is running.
+
+Bash
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   # Execute the schema creation script using psql inside the container  cat backend/src/main/resources/schema.sql | docker exec -i trading_db psql -U trader -d trading_data   `
+
+4\. Execution Steps
+-------------------
+
+### A. Backend Start (Spring Boot)
+
+1.  Bashcd backend
+    
+2.  Bash./gradlew bootRun_The application should start on port_ _**8080**_ _and connect to the database._
+    
+
+### B. Frontend Start (React/Vite)
+
+1.  Bashcd frontend
+    
+2.  Bashnpm install
+    
+3.  Bashnpm run dev_The dashboard will open automatically (usually on port 5173), using the configured proxy to communicate with the backend._
+    
+
+🔗 Project Documentation
+------------------------
+
+For detailed architectural diagrams, design rationale, and future improvements (including the Reflection document), please refer to the dedicated project space:
+
+[https://ecommercedev.atlassian.net/wiki/spaces/ATB/overview](https://ecommercedev.atlassian.net/wiki/spaces/ATB/overview)
