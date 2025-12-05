@@ -25,7 +25,7 @@ This project is a full-stack web application designed to simulate an autonomous 
 | **Data Access** | **Spring JDBC Template** | Required to meet the "No ORM" constraint (raw SQL). |
 | **Trading Logic** | **TA4J** (Technical Analysis for Java) | Used for calculating indicators (e.g., RSI) during strategy execution. |
 | **Database** | PostgreSQL (via Docker) | Reliable relational database storage. |
-| **Frontend** | React, Vite, Basic CSS | Modern, fast development environment. |
+| **Frontend** | React, Vite, Tailwind CSS | Modern, fast development environment. |
 | **Data Source** | **Binance REST API** | Used for fetching historical (klines) and live price data. |
 
 
