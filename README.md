@@ -1,77 +1,110 @@
-🤖 Auto Trading Bot Simulation Service
-======================================
+# 🤖 Auto Trading Bot Simulation Service
 
-Project Overview
-----------------
+## Project Overview
 
 This project is a full-stack web application designed to simulate an autonomous cryptocurrency trading bot. The goal is to develop a robust service capable of analyzing market data and executing trades in two distinct environments: a **Training Mode** (historical backtesting) and a **Trading Mode** (simulated live execution). The application tracks financial history and portfolio performance, visualized on a dynamic frontend dashboard.
 
 **Core Goal:** Develop a web application that simulates an automated crypto trading bot.
 
-🚀 Technical Stack
-------------------
+---
 
-**ComponentTechnologyReasoningBackend**Java 21, **Spring Boot 3**Robust, enterprise-grade architecture.**Data AccessSpring JDBC Template**Required to meet the "No ORM" constraint (raw SQL).**Trading LogicTA4J** (Technical Analysis for Java)Used for calculating indicators (e.g., RSI) during strategy execution.**Database**PostgreSQL (via Docker)Reliable relational database storage.**Frontend**React, Vite, Basic CSSModern, fast development environment.**Data SourceBinance REST API**Used for fetching historical (klines) and live price data.
+## 🚀 Technical Stack
 
-🛠️ Setup & Requirements
-------------------------
+| Component | Technology | Reasoning |
+| :--- | :--- | :--- |
+| **Backend** | Java 21, **Spring Boot 3** | Robust, enterprise-grade architecture. |
+| **Data Access** | **Spring JDBC Template** | Required to meet the "No ORM" constraint (raw SQL). |
+| **Trading Logic** | **TA4J** (Technical Analysis for Java) | Used for calculating indicators (e.g., RSI) during strategy execution. |
+| **Database** | PostgreSQL (via Docker) | Reliable relational database storage. |
+| **Frontend** | React, Vite, Basic CSS | Modern, fast development environment. |
+| **Data Source** | **Binance REST API** | Used for fetching historical (klines) and live price data. |
 
-### 1\. Prerequisites
+---
+
+## 🛠️ Setup & Requirements
+
+### 1. Prerequisites
 
 You must have the following tools installed:
 
-*   **Java Development Kit (JDK):** Version 21 or higher.
-    
-*   **Docker & Docker Compose:** Required to run the PostgreSQL database.
-    
-*   **Node.js & npm:** (npm >= 10.x) Required for frontend setup and execution.
-    
+* **Java Development Kit (JDK):** Version 21 or higher.
+* **Docker & Docker Compose:** Required to run the PostgreSQL database.
+* **Node.js & npm:** (npm >= 10.x) Required for frontend setup and execution.
 
-### 2\. Local Setup: Cloning & Secrets
+### 2. Local Setup: Cloning & Secrets
 
-1.  Bashgit clone git@github.com:yourusername/auto-trading-bot.gitcd auto-trading-bot
-    
-2.  The project uses an external .env file for database credentials (as per best practice). Create a file named .env in the root directory and populate it with the default values used by docker-compose.yml:Bash# .envDB\_USER=traderDB\_PASSWORD=passwordDB\_NAME=trading\_data
-    
+1.  **Clone the Repository:**
+    ```bash
+    git clone git@github.com:yourusername/auto-trading-bot.git
+    cd auto-trading-bot
+    ```
 
-### 3\. Database Setup (PostgreSQL)
+2.  **Configure Secrets (`.env` file):**
+    The project uses an external `.env` file for database credentials (as per best practice). Create a file named **`.env`** in the **root directory** and populate it with the default values used by `docker-compose.yml`:
+    ```bash
+    # .env
+    DB_USER=trader
+    DB_PASSWORD=password
+    DB_NAME=trading_data
+    ```
+
+### 3. Database Setup (PostgreSQL)
 
 This starts the database container and creates the volumes for data persistence.
 
-Bash
+```bash
+# Start the PostgreSQL container in detached mode
+docker-compose up -d
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   # Start the PostgreSQL container in detached mode  docker-compose up -d  # Verify the container is running  docker ps   `
+# Verify the container is running
+docker ps
+```
 
-Manual Schema Execution (Required for Raw SQL):
+### 4. Execution Steps
+A. **Backend Start (Spring Boot)**
+Navigate to the backend/ directory:
 
-Since we are not using Flyway, you must execute the schema script manually once after the container is running.
+```bash
 
-Bash
+cd backend
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   # Execute the schema creation script using psql inside the container  cat backend/src/main/resources/schema.sql | docker exec -i trading_db psql -U trader -d trading_data   `
+```
+Run the application using the Gradle wrapper:
 
-4\. Execution Steps
--------------------
+```bash
 
-### A. Backend Start (Spring Boot)
+./gradlew bootRun
 
-1.  Bashcd backend
-    
-2.  Bash./gradlew bootRun_The application should start on port_ _**8080**_ _and connect to the database._
-    
+```
+The application should start on port 8080 and connect to the database.
 
-### B. Frontend Start (React/Vite)
+B. **Frontend Start (React/Vite)**
+Open a new terminal tab and navigate to the frontend/ directory:
 
-1.  Bashcd frontend
-    
-2.  Bashnpm install
-    
-3.  Bashnpm run dev_The dashboard will open automatically (usually on port 5173), using the configured proxy to communicate with the backend._
-    
+```bash
 
-🔗 Project Documentation
-------------------------
+cd frontend
 
+```
+
+Install Node dependencies (if not done already):
+```bash
+
+npm install
+
+```
+
+Start the Vite development server:
+
+```bash
+
+npm run dev
+
+```
+
+The dashboard will open automatically (usually on port 5173), using the configured proxy to communicate with the backend.
+
+# 🔗 Project Documentation
 For detailed architectural diagrams, design rationale, and future improvements (including the Reflection document), please refer to the dedicated project space:
 
-[https://ecommercedev.atlassian.net/wiki/spaces/ATB/overview](https://ecommercedev.atlassian.net/wiki/spaces/ATB/overview)
+https://ecommercedev.atlassian.net/wiki/spaces/ATB/overview
