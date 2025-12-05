@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { useBotData } from './hooks/useBotData';
+import BotControls from './components/BotControls';
+import DashboardDataDisplay from './components/DashboardDataDisplay';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [selectedInterval, setSelectedInterval] = useState('1h');
+const { config, summary, history, holdings, performance, marketData, loading } = useBotData(selectedInterval);
+
+  if (loading || !config) { 
+    return (
+        <div className="min-h-screen p-8 text-center text-gray-500">
+            {loading ? 'Loading Dashboard...' : 'Error loading configuration.'}
+        </div>
+    );
+  }
+
+  const activeSymbol = config.selectedSymbol;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="min-h-screen p-4 bg-gray-100">
+      <h1 className="text-3xl font-bold text-center mb-6">Automated Trading Bot</h1>
+      
+      <BotControls 
+          currentConfig={config} 
+          onIntervalChange={setSelectedInterval}
+          currentInterval={selectedInterval}
+      />
+      
+      <DashboardDataDisplay 
+        summary={summary} 
+        history={history} 
+        holdings={holdings} 
+        performance={performance}
+        currentMode={config.tradingMode}
+        marketData={marketData}
+        symbol={activeSymbol} 
+      />
+    </div>
+  );
+};
 
-export default App
+export default App;
