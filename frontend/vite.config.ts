@@ -8,4 +8,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+
+  server: {
+    // Proxy setup to redirect all API calls to the Spring Boot backend
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080', // The address where Spring Boot is running
+        changeOrigin: true, // Needed for hostname replacement
+        secure: false,      // Use false for local http connections
+      }
+    }
+  }
 })
