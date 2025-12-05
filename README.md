@@ -105,4 +105,4 @@ The dashboard will open automatically (usually on port 5173), using the configur
 # Project Documentation
 For detailed architectural diagrams, design rationale, and future improvements (including the Reflection document), please refer to the dedicated project space:
 
-[https://app.gitbook.com/invite/81WIHwYNzzbAfVu3ErRc/zkX7QayWM3NavdaLhnen](Gitbook Link)
+[https://app.gitbook.com/invite/81WIHwYNzzbAfVu3ErRc/zkX7QayWM3NavdaLhnen]
