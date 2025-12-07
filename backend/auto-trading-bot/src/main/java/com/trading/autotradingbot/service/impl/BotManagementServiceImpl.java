@@ -4,11 +4,11 @@ import com.trading.autotradingbot.entity.BotConfig;
 import com.trading.autotradingbot.entity.enums.BotStatus;
 import com.trading.autotradingbot.entity.enums.TradingMode;
 import com.trading.autotradingbot.repository.BotConfigRepository;
-import com.trading.autotradingbot.service.BotManagementService; // Implements the interface
+import com.trading.autotradingbot.service.BotManagementService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service // Spring manages this as a bean
+@Service
 public class BotManagementServiceImpl implements BotManagementService {
 
     private final BotConfigRepository botConfigRepository;

@@ -59,7 +59,6 @@ public class SnapshotServiceImpl implements SnapshotService {
     private static BigDecimal calcCryptoBalance(BigDecimal currentMarketPrice, List<PortfolioHolding> holdings) {
         BigDecimal totalCryptoValue = BigDecimal.ZERO;
 
-        // 2. Calculate the value of all crypto holdings
         for (PortfolioHolding holding : holdings) {
             BigDecimal assetValue = holding.getQuantity().multiply(currentMarketPrice)
                     .setScale(SCALE, RoundingMode.HALF_UP);

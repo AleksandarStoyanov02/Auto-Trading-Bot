@@ -17,6 +17,8 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.trading.autotradingbot.common.AccountConstants.SCALE;
+
 @Service
 public class AllInOrderExecutionService implements OrderExecutionHandler {
 
@@ -26,7 +28,6 @@ public class AllInOrderExecutionService implements OrderExecutionHandler {
 
     private static final BigDecimal FEE_RATE = new BigDecimal("0.001"); // 0.1% flat fee for now
     private static final BigDecimal BUY_ALLOCATION_FACTOR = new BigDecimal("0.999"); // 99.9% allocation for fee buffer
-    private static final int SCALE = 8; // Financial precision scale
 
     public AllInOrderExecutionService(
             AccountRepository accountRepository,

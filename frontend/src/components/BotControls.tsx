@@ -107,11 +107,13 @@ const BotControls: React.FC<BotControlsProps> = ({ currentConfig, currentInterva
                         disabled={isRunning}
                         className="p-2 border rounded-lg bg-gray-50 disabled:bg-gray-200"
                     >
+                        <option value="1s">1 Second</option>
                         <option value="1m">1 Minute</option>
                         <option value="5m">5 Minutes</option>
                         <option value="1h">1 Hour (Default)</option>
                         <option value="4h">4 Hours</option>
                         <option value="1d">1 Day</option>
+                        <option value="1w">1 Week</option>
                     </select>
                 </div>
                 

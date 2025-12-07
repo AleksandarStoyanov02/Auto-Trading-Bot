@@ -4,8 +4,6 @@ import com.trading.autotradingbot.entity.BarData;
 import com.trading.autotradingbot.entity.enums.KlineInterval;
 import com.trading.autotradingbot.exception.BinanceApiException;
 import com.trading.autotradingbot.service.MarketDataProvider;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;

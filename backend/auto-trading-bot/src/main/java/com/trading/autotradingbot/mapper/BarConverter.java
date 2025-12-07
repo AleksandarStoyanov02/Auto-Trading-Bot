@@ -10,8 +10,11 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.Instant;
 
+// Utility class
 public class BarConverter {
     private static final Duration DEFAULT_TIME_PERIOD = Duration.ofHours(1);
+
+    private BarConverter() {}
 
     /**
      * Adapts BarData POJO into a TA4J BaseBar object using the full constructor.

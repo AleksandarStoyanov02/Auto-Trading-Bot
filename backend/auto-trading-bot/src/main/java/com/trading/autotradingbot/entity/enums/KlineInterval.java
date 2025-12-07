@@ -1,7 +1,7 @@
 package com.trading.autotradingbot.entity.enums;
 
-// Enforces supported intervals at compile-time
 public enum KlineInterval {
+    ONE_SECOND("1s"),
     ONE_MINUTE("1m"),
     THREE_MINUTES("3m"),
     FIVE_MINUTES("5m"),
