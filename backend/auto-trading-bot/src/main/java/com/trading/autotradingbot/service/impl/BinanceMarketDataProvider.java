@@ -4,6 +4,7 @@ import com.trading.autotradingbot.entity.BarData;
 import com.trading.autotradingbot.entity.enums.KlineInterval;
 import com.trading.autotradingbot.exception.BinanceApiException;
 import com.trading.autotradingbot.service.MarketDataProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,9 +25,8 @@ import org.slf4j.LoggerFactory;
 public class BinanceMarketDataProvider implements MarketDataProvider {
     private static final Logger log = LoggerFactory.getLogger(BinanceMarketDataProvider.class);
 
-    // Have some issues with Value annotation in this class, will be fixed later
-    // @Value("${binance.api.url}")
-    private final String baseUrl = "https://api.binance.com/api/v3";
+    @Value("${binance.api.url}")
+    private String baseUrl;
 
     private final RestTemplate restTemplate;
 
